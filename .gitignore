@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.runtime/
+.preview/
+.demo-preview/
+.ui-demo/
+*.db
+*.db-wal
+*.db-shm
+.env
+.env.*
+!.env.example
+*.log
+demo-accounts.json
+signing-key

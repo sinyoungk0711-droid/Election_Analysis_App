@@ -1,0 +1,11 @@
+.git
+.venv
+.runtime
+.preview
+.demo-preview
+.ui-demo
+__pycache__
+.pytest_cache
+.env
+*.db*
+docs/screenshots

@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: election
+      POSTGRES_USER: election
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U election -d election"]
+      interval: 5s
+      retries: 12
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://election:${POSTGRES_PASSWORD}@db:5432/election
+      APP_DATA_DIR: /data
+      APP_DEMO_MODE: "0"
+    volumes:
+      - files:/data
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+  worker:
+    build: .
+    command: ["python", "-m", "app.worker"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://election:${POSTGRES_PASSWORD}@db:5432/election
+      APP_DATA_DIR: /data
+      APP_DEMO_MODE: "0"
+    volumes:
+      - files:/data
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:
+  files:
